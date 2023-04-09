@@ -141,8 +141,8 @@ Map&lt;String,List&lt;String&gt;&gt; m = HashMap.newInstance();
 也可以采用</p>
 <h3 id="***_javabean_***	方式"><em><strong><em>JavaBean</em></strong></em>	方式</h3>
 <p>来构造对象后<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>set属性<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span><br>
-<strong>缺点<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></strong> 把构造的方式拆分成了多个调用<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>无法保证安全<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span>并且无法为不可变成员赋值<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></p>
-<h3 id="***_构建器<span-class="bd-box"><h-char class="bd bd-end"><h-inner>（</h-inner></h-char></span>builder<span class="bd-box"><h-char class="bd bd-beg"><h-inner>）</h-inner></h-char></span>模式_***<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span>"><em><strong><em>构建器<span class="bd-box"><h-char class="bd bd-end"><h-inner>（</h-inner></h-char></span>Builder<span class="bd-box"><h-char class="bd bd-beg"><h-inner>）</h-inner></h-char></span>模式</em></strong></em><span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></h3>
+<strong>缺点<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></strong> 把构造的方式拆分成了多个调用<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>无法保证安全<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span>并且无法为不可变成员赋值;</p>
+<h3 id="构建器(builder)模式:">构建器(Builder)模式:</h3>
 <div class="highlight"><pre class="code"><code><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Student</span></span>&#123;
 	<span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> id;
 	<span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String name;
