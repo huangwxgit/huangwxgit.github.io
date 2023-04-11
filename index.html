@@ -54,7 +54,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="2023/04/09/Effective%20Java%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">Effective Java 读书笔记第（一）章</a>
+      <a class="p-name article-title" href="2023/04/09/Effective%20Java%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">Effective Java 读书笔记第（一）章 -- 创建和销毁对象</a>
     </h1>
   
 
@@ -63,8 +63,7 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="一创建和销毁对象">一.创建和销毁对象</h1>
-<h2 id="1考虑用静态工厂方法代替构造器">1.考虑用静态工厂方法代替构造器</h2>
+        <h2 id="1考虑用静态工厂方法代替构造器">1.考虑用静态工厂方法代替构造器</h2>
 <blockquote>
 <p>优点<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></p>
 <ol>
@@ -168,6 +167,194 @@ Map&lt;String,List&lt;String&gt;&gt; m = HashMap.newInstance();
 <h3 id="调用">调用</h3>
 <div class="highlight"><pre class="code"><code>Student stu = <span class="hljs-keyword">new</span> Student.Builder(<span class="hljs-number">1001</span>,<span class="hljs-string">&quot;张三&quot;</span>).age(<span class="hljs-number">18</span>).sex(<span class="hljs-string">&#x27;男&#x27;</span>).heigh(<span class="hljs-number">180</span>).weight(<span class="hljs-number">65</span>).build();
 </code></pre></div>
+<h2 id="3用私有构造器或枚举类型强化singleton属性">3.用私有构造器或枚举类型强化Singleton属性</h2>
+<blockquote>
+<p><strong>Singleton<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span>单例<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>仅被实例化一次的类<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span></strong></p>
+</blockquote>
+<p>实现方式1:</p>
+<div class="highlight"><pre class="code"><code><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Singleton</span></span>&#123;
+	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Singleton INSTANCE= <span class="hljs-keyword">new</span> Singleton();
+	
+	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Singleton</span><span class="hljs-params">()</span></span>&#123; ... &#125;
+	
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">xxx</span><span class="hljs-params">()</span></span>&#123; ... &#125;
+&#125;
+</code></pre></div>
+<p>实现方式2<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></p>
+<div class="highlight"><pre class="code"><code><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Singleton</span></span>&#123;
+	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Singleton INSTANCE= <span class="hljs-keyword">new</span> Singleton();
+	
+	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Singleton</span><span class="hljs-params">()</span></span>&#123; ... &#125;
+	
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Singleton <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>&#123; <span class="hljs-keyword">return</span> INSTANCE ; &#125;
+	
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">xxx</span><span class="hljs-params">()</span></span>&#123; ... &#125;
+&#125;
+</code></pre></div>
+<p>然而这些实现并不能保证我们的类的对象唯一<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span></p>
+<ol>
+<li>因为反射可以调用私有构造器<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>所以我们要在构造器中 在他创建第二个对象时抛出异常</li>
+</ol>
+<div class="highlight"><pre class="code"><code><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Singleton</span> </span>&#123;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Singleton INSTANCE = <span class="hljs-keyword">new</span> Singleton();
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Singleton</span><span class="hljs-params">()</span> </span>&#123;
+        <span class="hljs-keyword">if</span> (INSTANCE != <span class="hljs-keyword">null</span>) &#123;
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalStateException(<span class="hljs-string">&quot;Singleton already exists&quot;</span>);
+        &#125;
+    &#125;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Singleton <span class="hljs-title">getInstance</span><span class="hljs-params">()</span> </span>&#123;
+        <span class="hljs-keyword">return</span> INSTANCE;
+    &#125;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">sout</span><span class="hljs-params">()</span> </span>&#123;
+        System.out.println(<span class="hljs-string">&quot;执行方法&quot;</span>);
+    &#125;
+
+&#125;
+</code></pre></div>
+<ol start="2">
+<li>在进行序列化反序列化时<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>每次都会创建一个新的实例<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>所以我们需要瞬时的 (transient),  对于一个类如果正确的声明了readResolve()方法<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>在反序列化时该对象返回的实例会被保留<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>新建对象的引用不被保留<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>会成为GC的对象<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></li>
+</ol>
+<div class="highlight"><pre class="code"><code> <span class="hljs-function"><span class="hljs-keyword">private</span> Object <span class="hljs-title">readResolve</span><span class="hljs-params">()</span></span>&#123;
+ 	<span class="hljs-keyword">return</span> INSTANCE;
+ &#125;
+</code></pre></div>
+<p>实现方式3<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span>  无偿序列化<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>防止多次实例化</p>
+<div class="highlight"><pre class="code"><code><span class="hljs-keyword">public</span> Enum Singleton&#123;
+	INSTANCE;
+	
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">xxx</span><span class="hljs-params">()</span></span>&#123; ... &#125;
+&#125;
+</code></pre></div>
+<h2 id="4通过私有构造器强化不可实例化的能力">4.通过私有构造器强化不可实例化的能力</h2>
+<blockquote>
+<p>某些时候我们需要编写只包含 静态方法和静态域的类<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>所以我们要防止其实例化<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span><br>
+例如java.lang.Math<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>java.util.Arrays等<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></p>
+</blockquote>
+<div class="highlight"><pre class="code"><code>	<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">UtiliityClass</span></span>&#123;
+		<span class="hljs-comment">// Suppress default constructor for noninstantiability</span>
+		<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">UtiliityClass</span><span class="hljs-params">()</span></span>&#123;
+			<span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> AssertionError();
+		&#125;
+	&#125;
+</code></pre></div>
+<h2 id="5避免创建不必要的对象">5.避免创建不必要的对象</h2>
+<blockquote>
+<p>一般来说最好能重用对象而不是在每次需要的时候就创建一个相同功能的新对象<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span><br>
+如果对象是不可变的<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>则可以始终被重用</p>
+</blockquote>
+<p>反面教材<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></p>
+<div class="highlight"><pre class="code"><code>	String s = <span class="hljs-keyword">new</span> Sting(<span class="hljs-string">&quot;sttringette&quot;</span>);
+</code></pre></div>
+<p>改进<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></p>
+<div class="highlight"><pre class="code"><code>	String s =  <span class="hljs-string">&quot;sttringette&quot;</span> ;
+</code></pre></div>
+<p>对于同时提供了构造方法和静态工厂的类<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>优先使用静态工厂方法<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></p>
+<blockquote>
+<p>例如<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span> Boolean.valueOf(String); 几乎总是优先于 Boolean(String) ;</p>
+</blockquote>
+<p>除了不可变对象以外<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>也可以重用那些已知不会被修改的可变对象<br>
+反面教材<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></p>
+<div class="highlight"><pre class="code"><code> <span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Person</span></span>&#123;
+ 	<span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Date birthDate;
+ 	
+ 	<span class="hljs-comment">//DON&#x27;T DO THIS!!</span>
+ 	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">isBabyBoomer</span><span class="hljs-params">()</span></span>&#123;
+ 		Calendar gmtCal = Calendar.getInstance(TimeZone.getTimeZone(<span class="hljs-string">&quot;GMT&quot;</span>));
+ 		gmt.set(<span class="hljs-number">1946</span>,Calendar.JANUARY,<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>);
+ 		Date boomStart = gmtCal.getTime();
+ 		gmtt.set(<span class="hljs-number">1965</span>,Calendar.JANUARY,<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>);
+ 		Date boomEnd = gtmCal.getTime();
+ 		<span class="hljs-keyword">return</span> birthDate.compareTo(boomStart) &gt;= <span class="hljs-number">0</span> &amp;&amp;
+ 		birthDate.compare(boomEnd) &lt; <span class="hljs-number">0</span>;
+ 	&#125;
+ &#125;
+</code></pre></div>
+<p><strong>这段代码中该方法每次被调用<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>都要创建一个Calendar,一个TimeZone和两个Date实例<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></strong><br>
+改进后<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></p>
+<div class="highlight"><pre class="code"><code> <span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Person</span></span>&#123;
+ 	<span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Date birthDate;
+ 	
+ 	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Date BOOM_START;
+ 	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Date BOOM_END;
+ 	
+ 	<span class="hljs-keyword">static</span>&#123;
+ 		Calendar gmtCal = Calendar.getInstance(TimeZone.getTimeZone(<span class="hljs-string">&quot;GMT&quot;</span>));
+ 		gmt.set(<span class="hljs-number">1946</span>,Calendar.JANUARY,<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>);
+		BOOM_START = gmtCal.getTime();
+		gmtt.set(<span class="hljs-number">1965</span>,Calendar.JANUARY,<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>);
+		BOOM_END = gtmCal.getTime();
+ 	&#125;
+ 	
+ 	<span class="hljs-comment">//DON&#x27;T DO THIS!!</span>
+ 	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">isBabyBoomer</span><span class="hljs-params">()</span></span>&#123;
+ 		<span class="hljs-keyword">return</span> birthDate.compareTo(boomStart) &gt;= <span class="hljs-number">0</span> &amp;&amp;
+ 		birthDate.compare(boomEnd) &lt; <span class="hljs-number">0</span>;
+ 	&#125;
+ &#125;
+</code></pre></div>
+<p>在isbabyBoomer()方法被频繁调用时<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>性能会显著提升<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>并且语义也更加的清晰<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span><br>
+但是如果改进后的Person被初始化了<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>方法却一直不被调用<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>那就没有必要改进了</p>
+<p><strong>优先使用基本类型<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span> 当心无意识的自动装箱</strong></p>
+<div class="highlight"><pre class="code"><code>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>&#123;
+        Long sum = <span class="hljs-number">0L</span>;
+        <span class="hljs-keyword">long</span> l = System.nanoTime();
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; Integer.MAX_VALUE; i++) &#123;
+            sum += i;
+        &#125;
+        <span class="hljs-keyword">long</span> l1 = System.nanoTime();
+        System.out.println((l1 - l)/<span class="hljs-number">1000000000.00</span>);
+        System.out.println(sum);
+
+        <span class="hljs-comment">//基本类型</span>
+        <span class="hljs-keyword">long</span> sum2 = <span class="hljs-number">0L</span>;
+        <span class="hljs-keyword">long</span> l2 = System.nanoTime();
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; Integer.MAX_VALUE; i++) &#123;
+            sum2 += i;
+        &#125;
+        <span class="hljs-keyword">long</span> l3 = System.nanoTime();
+        System.out.println((l3 - l2)/<span class="hljs-number">1000000000.00</span>);
+        System.out.println(sum2);
+    &#125;
+</code></pre></div>
+<p>两次得到的结果<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></p>
+<blockquote>
+<p>5.198668991<br>
+2305843005992468481<br>
+0.571807202<br>
+2305843005992468481</p>
+</blockquote>
+<p>在我的机器上测试效率在10倍的样子<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></p>
+<h2 id="6消除过期的对象引用">6.消除过期的对象引用</h2>
+<blockquote>
+<p>1.如果一个对象引用被无意识的保留<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>那么垃圾回收不会处理这个对象<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>也不会被处理被这个对象引用的其他对象<br>
+2.内存泄露的另一个常见来源是缓存<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></p>
+</blockquote>
+<p>解决方案<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></p>
+<blockquote>
+<p>1.清空过期的引用;<br>
+2.使用弱引用<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>例如weakHashMap();</p>
+</blockquote>
+<h2 id="7-避免使用终结方法(finalizer)">7. 避免使用终结方法(finalizer)</h2>
+<blockquote>
+<ol>
+<li>在C++中的构析器所做的工作<span class="bd-box"><h-char class="bd bd-end"><h-inner>（</h-inner></h-char></span>回收一个对象所占用的资源<span class="bd-box"><h-char class="bd bd-beg"><h-inner>）</h-inner></h-char></span> 在java中通常用try-finally来完成类似的工作;</li>
+<li>终结方法的执行的时间点是不确定的<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>终结方法的线程优先级并不比程序的其他线程高<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></li>
+<li><strong>终结方法有可能不会及时执行或根本不执行<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>所以依赖终结方法释放资源并不可取</strong></li>
+<li>终结方法会使对象的创建/销毁 效率大幅下降<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></li>
+</ol>
+</blockquote>
+<p>如果类对象中的资源确实需要终止<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>那么需要提供显示的终止方法<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>例如<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></p>
+<blockquote>
+<p>InputStream\OutputStream 的close()方法<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span><br>
+显示的终止方法通常与try-finally结合起来使用</p>
+</blockquote>
+<p>那么finalizer有什么用呢</p>
+<blockquote>
+<p>作为安全网的兜底方式<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>例如 在需要显示调用终结方法的时候忘记了调用/故意不调用<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span></p>
+</blockquote>
 
       
     </div>
