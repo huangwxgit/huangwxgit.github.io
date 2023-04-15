@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Effective Java 读书笔记第（二）章 -- 对于所有对象都通用的方法 | Huangwx的个人博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="description" content="8.覆盖equals时请遵守通用约定
+
+类的每个实例本质上都是唯一的
+不关心是否提供了“逻辑相等”的测试功能
+超类已经覆盖了equals，从超类继承过来的行为对于子类也是合适的
+类是私有的或者包装级私有的。确认equals方法永远不会被调用
+
+
+什么时候应该覆盖equals？
+答： 超类没有覆盖eq">
+  
+  
+  
+  <link rel="stylesheet" href="../../../../css/style.css">
+  
+    <link rel="stylesheet" href="../../../../fancybox/jquery.fancybox-1.3.4.css">
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div id="nav-outer">
+  <nav id="main-nav" class="outer">
+    <a id="main-nav-toggle" class="nav-icon"></a>
+    
+      <a class="main-nav-link" href="../../../../index.html">Home</a>
+    
+      <a class="main-nav-link" href="../../../../archives">Archives</a>
+    
+    <div class="main-nav-space-between"></div>
+    
+  </nav>
+</div>
+<div id="header-title">
+  <h1 id="logo-wrap">
+    <a href="../../../../index.html" id="logo">Huangwx的个人博客</a>
+  </h1>
+  
+</div>
+
+      <div id="content" class="outer">
+        <section id="main"><article id="post-Effective Java 读书笔记第（二）章 -- 对于所有对象都通用的方法" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="" class="article-date">
+  <time class="dt-published" datetime="2023-04-15T05:34:25.000Z" itemprop="datePublished">2023-04-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Effective Java 读书笔记第（二）章 -- 对于所有对象都通用的方法
+    </h1>
+  
+
+      </header>
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="8覆盖equals时请遵守通用约定">8.覆盖equals时请遵守通用约定</h2>
+<ul>
+<li>类的每个实例本质上都是唯一的</li>
+<li>不关心是否提供了<span class="bd-box"><h-char class="bd bd-end"><h-inner>“</h-inner></h-char></span>逻辑相等<span class="bd-box"><h-char class="bd bd-beg"><h-inner>”</h-inner></h-char></span>的测试功能</li>
+<li>超类已经覆盖了equals<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>从超类继承过来的行为对于子类也是合适的</li>
+<li>类是私有的或者包装级私有的<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span>确认equals方法永远不会被调用</li>
+</ul>
+<blockquote>
+<p>什么时候应该覆盖equals<span class="bd-box"><h-char class="bd bd-beg"><h-inner>？</h-inner></h-char></span><br>
+答<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span> 超类没有覆盖equals,并且类具有自己的<span class="bd-box"><h-char class="bd bd-end"><h-inner>“</h-inner></h-char></span>逻辑相等<span class="bd-box"><h-char class="bd bd-beg"><h-inner>”</h-inner></h-char></span>的概念<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></p>
+</blockquote>
+<p>equals方法实现了等价关系<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></p>
+<ul>
+<li>自反性<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span> 对于任何的非null的引用值x<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>x.equals(x) 必须返回true;</li>
+<li>对称性<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span> 对于任何的非null的引用值x,y; 必须具有 x.equals(y) 为true, y.equals(x) 也为true;</li>
+<li>传递性<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span> 对于任何的非null的引用值x,y,z<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>必须具有x.equals(y) 为true, y.equals(z) 为 true, 则 z.equals(x)也为true;</li>
+<li>一致性<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span> 对于任何的非null的引用值x,y<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span> 在对象没有被改变的情况下<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>多次x.equals(y) 一致的返回 true 或 一致的返回false;</li>
+<li>对于任何非null值的引用x<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>x.equals(null) 都必须返回 false;</li>
+</ul>
+<p>解释<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></p>
+<ul>
+<li>自反性<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span>即要求对象等于自身<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>否则把对象放入集合中<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>集合的contains方法会告诉你<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>该集合不存在刚才添加的实例</li>
+<li>对称性<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span>单向的相等就没有办法保证程序的正确性预期<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></li>
+<li>传递性<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span>两两相等原则,不符合传递性:</li>
+</ul>
+<div class="highlight"><pre class="code"><code>	ColorPoint p1 = <span class="hljs-keyword">new</span> ColorPoint(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,Clor.RED);
+	Point p2 = <span class="hljs-keyword">new</span> Point(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>);
+	ColorPoint p3= <span class="hljs-keyword">new</span> ColorPoint(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,Clor.BLUE);
+	
+	p2.equals(p1); <span class="hljs-comment">//返回true;</span>
+	p1.equals(p2); <span class="hljs-comment">//返回false;</span>
+	
+	<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Point</span></span>&#123;
+		<span class="hljs-meta">@Override</span>
+		<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">equals</span><span class="hljs-params">(Object o)</span></span>&#123;
+			<span class="hljs-keyword">if</span>(!(o.instaceof Point))
+				<span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
+			Point p = (Point)o;
+			<span class="hljs-keyword">return</span> p.x == x &amp;&amp; p.y == y;
+		&#125;
+	&#125;
+	
+	<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PointColor</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Point</span></span>&#123;
+		<span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Color color;
+		<span class="hljs-meta">@Override</span>
+		<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">equals</span><span class="hljs-params">(Object o )</span></span>&#123;
+		  <span class="hljs-keyword">if</span>(!(o instaceof PointColor))
+		    <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
+		    <span class="hljs-keyword">return</span> <span class="hljs-keyword">super</span>.equals(o) &amp;&amp; ((PointColor) o).color == color;
+		&#125;
+	&#125;
+	
+</code></pre></div>
+<p>结合上述要求<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>得出以下结论<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></p>
+<blockquote>
+<ol>
+<li>使用== 操作符检查 <span class="bd-box"><h-char class="bd bd-end"><h-inner>“</h-inner></h-char></span>参数是否为该对象的引用<span class="bd-box"><h-char class="bd bd-beg"><h-inner>”</h-inner></h-char><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>如果是则返回true; 属于一种性能优化<br>
+对于基本对象除了float,double使用==<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span> folat使用Floatc.ompare(); double使用Double.compare()</li>
+<li>使用Instanceof检查 <span class="bd-box"><h-char class="bd bd-end"><h-inner>“</h-inner></h-char></span>参数是否为正确的类型<span class="bd-box"><h-char class="bd bd-beg"><h-inner>”</h-inner></h-char><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>如果不是则返回false;</li>
+<li>把参数转换为 正确的类型<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>因为Instaceof已经比较过了<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>所以会确保成功</li>
+<li>对于该类中的每个 关键域 <span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>检查参数与该对象中对应的域 相匹配<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span>全部成功则返回true;否则返回false;</li>
+</ol>
+</blockquote>
+<h2 id="9-覆盖equals时总要覆盖hashcode">9. 覆盖equals时总要覆盖hashCode</h2>
+<blockquote>
+<p>如果不这样做<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>会违反Object.hashCode的通用约定<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>无法与所有基于散列的集合一起正常运作<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>这样的集合包括HashMap<span class="bd-box"><h-char class="bd bd-beg"><h-inner>、</h-inner></h-char></span>HashSet<span class="bd-box"><h-char class="bd bd-beg"><h-inner>、</h-inner></h-char></span>Hashtable等<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></p>
+</blockquote>
+<ol>
+<li>equals方法所用到的操作信息没有被修改<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>多次调用hashCode必须返回同一个整数<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span></li>
+<li>如果两个对象equals相等<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>那么两个对象的 hashCode必须产生同样的结果<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></li>
+<li>equals不相等<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>尽量产生不同的结果<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>提高散列的性能<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></li>
+</ol>
+<h2 id="10始终要覆盖tostring">10.始终要覆盖toString</h2>
+<blockquote>
+<p>Jenny=PhoneNumber@163b91 和 Jenny=(408) 967-5309 <span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>在调试的时候你更希望看到哪一个?</p>
+</blockquote>
+<p>在实际的应用中<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>toString应该返回更值得关注的信息<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span><br>
+例如<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></p>
+<div class="highlight"><pre class="code"><code>	<span class="hljs-meta">@Override</span>
+	<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PhoneNumber</span></span>&#123;
+		...
+	
+		<span class="hljs-comment">/**
+		* 返回一个14位长度的电话
+		* 格式为 &lt;span class=&quot;bd-box&quot;&gt;&lt;h-char class=&quot;bd bd-end&quot;&gt;&lt;h-inner&gt;（&lt;/h-inner&gt;&lt;/h-char&gt;&lt;/span&gt;XXX&lt;span class=&quot;bd-box&quot;&gt;&lt;h-char class=&quot;bd bd-beg&quot;&gt;&lt;h-inner&gt;）&lt;/h-inner&gt;&lt;/h-char&gt;&lt;/span&gt;YYY-ZZZZ
+		* 其中XXX 是 areaCode 区域号
+		* YYY是 prefix 前缀
+		* ZZZZ是 lineNumber
+		*/</span>
+		<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">toString</span><span class="hljs-params">()</span></span>&#123;
+			<span class="hljs-keyword">return</span> String.fomart(<span class="hljs-string">&quot;(%03d) %03d-%04d&quot;</span>,
+			areaCode,
+			prefix,
+			lineNumber)
+		&#125;
+	&#125;
+
+</code></pre></div>
+<h2 id="11-谨慎的覆盖colone">11. 谨慎的覆盖colone</h2>
+<blockquote>
+<p>如果一个类实现了Cloneable接口<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>Object的clone方法就返回该对象的逐域拷贝<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>否则会抛出ClassNotSupportedException异常<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span></p>
+</blockquote>
+<p>约定:</p>
+<blockquote>
+<p>x.clone() !=x ; true<br>
+x.clone().getClass() == x.getClass() ; true<br>
+x.clone().equals(x); true<br>
+但是这些不是绝对的要求<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></p>
+</blockquote>
+<p>简单的clone会造成的问题<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span><br>
+比如Stack类中 有一个 Object[] 数组 elements<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span> 克隆后的新对象则会拷贝该 elements引用指向相同的 数组对象<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>修改后会破坏约束条件<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></p>
+<p>如果调用的是构造器就不会发生<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span><br>
+对于引用对象来说<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>需要递归的调用clone;</p>
+<div class="highlight"><pre class="code"><code>	<span class="hljs-function"><span class="hljs-keyword">public</span> Stack <span class="hljs-title">clone</span><span class="hljs-params">()</span></span>&#123;
+	  <span class="hljs-keyword">try</span>&#123;
+		Stack result = (Stack) <span class="hljs-keyword">super</span>.clone();
+		result.elements = elements.clone();
+		<span class="hljs-keyword">return</span> result;
+		&#125;cathch(ClassNotSupportException e)&#123;
+			<span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> AsserionError();
+		&#125;
+	&#125;
+</code></pre></div>
+<p>注意<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span>如果elements是final的则该方案不可用<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span><br>
+并且有时候递归的方式还不够<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span>例如<br>
+Hashtable中的Entry<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>支持一个深拷贝的方法<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>用new Entry的构造方式来提供深度拷贝<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span>遍历数组<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>重新put<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span><br>
+虽然这样往往没有上述方法快<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></p>
+<p><strong>注意2<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span>如果使用线程安全的类来实现Colneable接口<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>则需要编写同步的方法来调用 super.clone()</strong><br>
+总结<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span><br>
+所有实现了Cloneable方法的类都应该有一个共有的clone方法<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span><br>
+首先调用super.clone<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>然后修正需要修正的域<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span><br>
+即拷贝深层结构的可变对象<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>用新对象的引用替换原来指向对象的引用<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span><br>
+如果只包含基本类型的域<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>或者不可变对象的引用<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>多半不需要修正<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span>除了基本类型代表该对象唯一的ID或者创建时间等</p>
+<p><strong>然而使用拷贝工厂/拷贝构造器是更好的选择</strong><br>
+例如<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span>	<br>
+HashSet想拷贝成TreeSet,  new TreeSet(s)<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span><br>
+拷贝构造器<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span>public Yum(Yum yum);<br>
+拷贝工厂<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span> public static Yum newInstance(Yum yum);</p>
+<h2 id="12-考虑实现comparable接口">12. 考虑实现Comparable接口</h2>
+<blockquote>
+<p>实现了Comparable接口<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>就可以和依赖该接口的集合实现进行配合使用<br>
+比如按照字母排序<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>时间排序<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span></p>
+</blockquote>
+<p>将该对象与指定的对象相比较<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>小于<span class="bd-box"><h-char class="bd bd-beg"><h-inner>、</h-inner></h-char></span>等于<span class="bd-box"><h-char class="bd bd-beg"><h-inner>、</h-inner></h-char></span>大于时返回 负整数<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>零<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>正整数<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span>无法比较则抛出ClassCastException<br>
+他的约定与equals是一致的<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span><br>
+除了实现Comparable接口<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>也可以使用已有的Comparator<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>编写自己的Comparator,或者使用匿名内部类等方式<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/java-effective-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">java-effective 读书笔记</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="../../09/Effective%20Java%20%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E7%AC%AC%EF%BC%88%E4%B8%80%EF%BC%89%E7%AB%A0%20--%20%E5%88%9B%E5%BB%BA%E5%92%8C%E9%94%80%E6%AF%81%E5%AF%B9%E8%B1%A1/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">
+        
+          Effective Java 读书笔记第（一）章 -- 创建和销毁对象
+        
+      </div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Huangwx<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a><br>
+      
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="../../../../js/clipboard.min.js"></script>
+<script src="../../../../js/jquery-1.4.3.min.js"></script>
+
+<script src="../../../../fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+
+
+<script src="../../../../js/script.js"></script>
+
+
+
+
+
+
+<script>
+  MathJax = {
+    options: {
+      enableMenu: false
+    },
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    }
+  };
+</script>
+<!-- <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+    CommonHTML: {
+      linebreaks: false
+    }
+  });
+  </script> -->
+<script type="text/javascript" id="MathJax-script" async
+  src="../../../../mathjax/tex-chtml.js">
+</script>
+<!-- <script type="text/javascript"
+   src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_CHTML">
+</script> -->
+
+
+
+  </div>
+</body>
+</html>
