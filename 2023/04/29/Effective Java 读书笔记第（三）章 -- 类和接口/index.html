@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Effective Java 读书笔记第（三）章 -- 类和接口 | Huangwx的个人博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="description" content="13.使类和成员的可访问性最小化
+
+设计良好的模块会隐藏实现细节，将API和实现清晰的隔离；模块之间通过API来通信，即 封装
+封装
+优点：
+1.模块间的解耦
+2.可重用性
+
+通过访问控制来体现该特性；即类所在的位置以及访问修饰符控制;
+
+1.对于顶级类和接口，只有两种访问级别: 包级别私有（def">
+  
+  
+  
+  <link rel="stylesheet" href="../../../../css/style.css">
+  
+    <link rel="stylesheet" href="../../../../fancybox/jquery.fancybox-1.3.4.css">
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div id="nav-outer">
+  <nav id="main-nav" class="outer">
+    <a id="main-nav-toggle" class="nav-icon"></a>
+    
+      <a class="main-nav-link" href="../../../../index.html">Home</a>
+    
+      <a class="main-nav-link" href="../../../../archives">Archives</a>
+    
+    <div class="main-nav-space-between"></div>
+    
+  </nav>
+</div>
+<div id="header-title">
+  <h1 id="logo-wrap">
+    <a href="../../../../index.html" id="logo">Huangwx的个人博客</a>
+  </h1>
+  
+</div>
+
+      <div id="content" class="outer">
+        <section id="main"><article id="post-Effective Java 读书笔记第（三）章 -- 类和接口" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="" class="article-date">
+  <time class="dt-published" datetime="2023-04-29T07:59:36.000Z" itemprop="datePublished">2023-04-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Effective Java 读书笔记第（三）章 -- 类和接口
+    </h1>
+  
+
+      </header>
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="13使类和成员的可访问性最小化">13.使类和成员的可访问性最小化</h2>
+<blockquote>
+<p>设计良好的模块会隐藏实现细节<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>将API和实现清晰的隔离<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span>模块之间通过API来通信<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>即 <strong>封装</strong></p>
+<h3 id="封装">封装</h3>
+<p>优点<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span><br>
+1.模块间的解耦<br>
+2.可重用性</p>
+</blockquote>
+<p>通过访问控制来体现该特性<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span>即<strong>类所在的位置</strong>以及<strong>访问修饰符</strong>控制;</p>
+<blockquote>
+<p>1.对于顶级类和接口<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>只有两种访问级别: 包级别私有<span class="bd-box"><h-char class="bd bd-end"><h-inner>（</h-inner></h-char></span>default<span class="bd-box"><h-char class="bd bd-beg"><h-inner>）</h-inner></h-char></span>/public<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span>包级私有实际上是包的实现的一部分<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>而不是API的一部分<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>在后续的版本中可以对其进行替换或移除<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span>如果是共有的<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>则必须考虑支持兼容性<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>对其操作会影响到其他模块;<br>
+2.如果包级私有类的顶层类或接口<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>只有一个类在内部使用<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>就应该成为该类的私有嵌套类<span class="bd-box"><h-char class="bd bd-end"><h-inner>（</h-inner></h-char></span>内部类<span class="bd-box"><h-char class="bd bd-beg"><h-inner>）</h-inner></h-char></span><br>
+3.从default-&gt;protected; 即包内访问-&gt; 包内+子类访问<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>相当于包类实现-&gt;对外API<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>应该少用<br>
+4.子类继承的方法  访问级别必须 &gt;= 父类的访问级别<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span> 而实现接口重写的方法必须public</p>
+</blockquote>
+<p>如果类中包含实例对象<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>则必须是private的<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>例如<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></p>
+<div class="highlight"><pre class="code"><code><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Thing[] VALUES  =  &#123;  ... &#125;
+
+</code></pre></div>
+<p>虽然数组是final的<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>但数组中的对象是可变的<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>应该</p>
+<div class="highlight"><pre class="code"><code><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Thing[] VALUES  =  &#123;  ... &#125;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Thing[] values()&#123;
+	<span class="hljs-keyword">return</span> VALUES.clone();
+&#125;
+</code></pre></div>
+<h2 id="14在公有类中使用访问方法而非共有域">14.在公有类中使用访问方法而非共有域</h2>
+<p>错误做法<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></p>
+<div class="highlight"><pre class="code"><code>	<span class="hljs-class"><span class="hljs-keyword">class</span>  <span class="hljs-title">Point</span></span>&#123;
+		<span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> x;
+		<span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> y;
+	&#125;
+</code></pre></div>
+<p>正确封装<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></p>
+<div class="highlight"><pre class="code"><code>	<span class="hljs-class"><span class="hljs-keyword">class</span>  <span class="hljs-title">Point</span></span>&#123;
+		<span class="hljs-keyword">private</span> <span class="hljs-keyword">double</span> x;
+		<span class="hljs-keyword">private</span> <span class="hljs-keyword">double</span> y;
+		
+		<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> <span class="hljs-title">getX</span><span class="hljs-params">()</span></span>&#123;
+		 <span class="hljs-keyword">return</span> x;
+		&#125;
+		
+		<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setX</span><span class="hljs-params">(doouble x)</span></span>&#123;
+			<span class="hljs-keyword">this</span>.x = x;
+		&#125;
+		
+		......
+	&#125;
+</code></pre></div>
+<h2 id="15-使可变性最小化">15. 使可变性最小化</h2>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/java-effective-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">java-effective 读书笔记</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="../../15/Effective%20Java%20%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E7%AC%AC%EF%BC%88%E4%BA%8C%EF%BC%89%E7%AB%A0%20--%20%E5%AF%B9%E4%BA%8E%E6%89%80%E6%9C%89%E5%AF%B9%E8%B1%A1%E9%83%BD%E9%80%9A%E7%94%A8%E7%9A%84%E6%96%B9%E6%B3%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">
+        
+          Effective Java 读书笔记第（二）章 -- 对于所有对象都通用的方法
+        
+      </div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Huangwx<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a><br>
+      
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="../../../../js/clipboard.min.js"></script>
+<script src="../../../../js/jquery-1.4.3.min.js"></script>
+
+<script src="../../../../fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+
+
+<script src="../../../../js/script.js"></script>
+
+
+
+
+
+
+<script>
+  MathJax = {
+    options: {
+      enableMenu: false
+    },
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    }
+  };
+</script>
+<!-- <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+    CommonHTML: {
+      linebreaks: false
+    }
+  });
+  </script> -->
+<script type="text/javascript" id="MathJax-script" async
+  src="../../../../mathjax/tex-chtml.js">
+</script>
+<!-- <script type="text/javascript"
+   src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_CHTML">
+</script> -->
+
+
+
+  </div>
+</body>
+</html>
