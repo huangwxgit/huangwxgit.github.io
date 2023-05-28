@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>java后端接口开发建议 | Huangwx的个人博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="description" content="1.接口参数校验
+接口入参和出参都需要进行校验
+
+入参的必填非空(非null，及字符串的&amp;quot;&amp;quot;)，数据长度(超出数据库字段设计长度)，数据范围(例如年龄&amp;gt;0)等等
+对于返回值，当返回为null时，与前端约定好返回为空字符串，空对象，空数组等。
+我比较常用的javax 包下的 ">
+  
+  
+  
+  <link rel="stylesheet" href="../../../../css/style.css">
+  
+    <link rel="stylesheet" href="../../../../fancybox/jquery.fancybox-1.3.4.css">
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div id="nav-outer">
+  <nav id="main-nav" class="outer">
+    <a id="main-nav-toggle" class="nav-icon"></a>
+    
+      <a class="main-nav-link" href="../../../../index.html">Home</a>
+    
+      <a class="main-nav-link" href="../../../../archives">Archives</a>
+    
+    <div class="main-nav-space-between"></div>
+    
+  </nav>
+</div>
+<div id="header-title">
+  <h1 id="logo-wrap">
+    <a href="../../../../index.html" id="logo">Huangwx的个人博客</a>
+  </h1>
+  
+</div>
+
+      <div id="content" class="outer">
+        <section id="main"><article id="post-java后端接口开发建议" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="" class="article-date">
+  <time class="dt-published" datetime="2023-05-28T07:55:07.000Z" itemprop="datePublished">2023-05-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      java后端接口开发建议
+    </h1>
+  
+
+      </header>
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="1接口参数校验">1.接口参数校验</h2>
+<p>接口入参和出参都需要进行校验</p>
+<ul>
+<li>入参的必填非空(非null<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>及字符串的&quot;&quot;)<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>数据长度(超出数据库字段设计长度)<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>数据范围(例如年龄&gt;0)等等</li>
+<li>对于返回值<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>当返回为null时<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>与前端约定好返回为空字符串<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>空对象<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>空数组等<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span><br>
+我比较常用的javax 包下的 @Valid<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>因为方便嵌套验证</li>
+</ul>
+<div class="highlight"><pre class="code"><code><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PersonDTO</span> </span>&#123;
+
+<span class="hljs-meta">@Length(value=10, message = &quot;姓名不允许超过10个字&quot; )</span>
+<span class="hljs-meta">@NotEmpty(message =&quot;姓名不允许为空&quot;)</span>
+<span class="hljs-keyword">private</span> String name;
+
+<span class="hljs-meta">@Min(value=0, message = &quot;年龄不允许小于0&quot;)</span>
+<span class="hljs-meta">@NotNull(messaage = &quot;年龄不允许为空&quot;)</span>
+<span class="hljs-keyword">private</span> Integer age;
+
+<span class="hljs-meta">@NotNull(message = &quot;人不能没有朋友喔&quot;)</span>
+<span class="hljs-meta">@Valid</span>
+<span class="hljs-comment">//验证朋友姓名&lt;span class=&quot;bd-box&quot;&gt;&lt;h-char class=&quot;bd bd-beg&quot;&gt;&lt;h-inner&gt;，&lt;/h-inner&gt;&lt;/h-char&gt;&lt;/span&gt;年龄等等...</span>
+<span class="hljs-keyword">private</span> Friend friend;
+
+......
+&#125;
+</code></pre></div>
+<h2 id="2-接口老版本兼容">2. 接口老版本兼容</h2>
+<ul>
+<li>场景1<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span>程序包含移动端<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>非强制升级<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>部分用户使用新版本<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>部分用户使用老版本<span class="bd-box"><h-char class="bd bd-beg"><h-inner>；</h-inner></h-char></span></li>
+<li>场景2<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span>程序开发人员流动性强<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>一段代码甚至可能两位数的人改过<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span>对老版本做兼容<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>方便出问题回退兼容<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span>也方便剥离对老接口的拓展<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span></li>
+</ul>
+<div class="highlight"><pre class="code"><code>  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">oldMethod</span><span class="hljs-params">(A,B)</span></span>&#123;
+  	<span class="hljs-keyword">new</span> Method(A,B,<span class="hljs-keyword">null</span>);
+  &#125;
+  
+  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">newMethod</span><span class="hljs-params">(A,B,C)</span></span>&#123;
+  	...
+  &#125;
+</code></pre></div>
+<h2 id="3-接口拓展性考虑">3. 接口拓展性考虑</h2>
+<p>设计通用流程</p>
+<h2 id="4-接口防重处理">4. 接口防重处理</h2>
+<ul>
+<li>对于查询<span class="bd-box"><h-char class="bd bd-beg"><h-inner>、</h-inner></h-char></span>删除类操作不会产生错误数据<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span>不用做防重</li>
+<li>对于  新增/修改类操作<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>需要做防重业处理<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>根据请求的 序列id<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>采用redis的setnx<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>或数据库防重表<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>LRUMap<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>分布式锁等处理<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span></li>
+</ul>
+<h2 id="5核心接口,线程池隔离">5.核心接口,线程池隔离</h2>
+<ul>
+<li>将核心接口和普通接口 区分开使用不同的 线程池<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span></li>
+<li>避免普通接口线程池溢出 导致核心接口(如登录等功能)异常<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span></li>
+</ul>
+<h2 id="6关键接口,日志打印">6.关键接口,日志打印</h2>
+<ul>
+<li>生产环境无法直接debug<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>必须依靠日志查问题<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>方便排查</li>
+</ul>
+<h2 id="7三方接口调用时异常">7.三方接口调用时异常</h2>
+<ul>
+<li>异常后重试<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span>是否需要重试<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>重试次数</li>
+<li>调用超时<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span>设置超时断开<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>否则占用线程不释放导致程序可能崩溃</li>
+</ul>
+<h2 id="8-接口功能单一性原则">8. 接口功能单一性原则</h2>
+<ul>
+<li>可复用性高且方便后续功能拆分<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span></li>
+</ul>
+<h2 id="9-部分接口采用异步处理">9. 部分接口采用异步处理</h2>
+<ul>
+<li>目前实现的方式使用消息队列多一些<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>后续耗时操作后台完成<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>提高用户交互体验<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span></li>
+</ul>
+<h2 id="10接口查询优化,串行改为并行(提升接口访问性能)">10.接口查询优化,串行改为并行(提升接口访问性能)</h2>
+<ul>
+<li>在接口中有多个查询<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>且查询之间没有顺序关系<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>则可以使用CompletableFuture.allOf().join(); 合并查询</li>
+</ul>
+<h2 id="11接口合并与批处理">11.接口合并与批处理</h2>
+<ul>
+<li>例如在集合中<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>需要 用户服务模块的数据<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>不能在for循环使用 getById()这种方式<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>相当于调用n次服务/N次数据库<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span></li>
+<li>应当得到 id集合<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>使用getByIds()批处理<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>将结果封装为map对象<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>在循环中使用map.get(“id”)的方式<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>减少访问次数</li>
+</ul>
+<h2 id="12接口性能,sql优化">12.接口性能,sql优化</h2>
+<ul>
+<li>分析sql查询计划</li>
+<li>索引优化</li>
+<li>数据量太大(分库分表<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>ES)</li>
+<li>减少表关联<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>方便拆分表<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>拆分服务产生问题</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/java%E6%8E%A5%E5%8F%A3%E5%BC%80%E5%8F%91/" rel="tag">java接口开发</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="../../../04/29/Effective%20Java%20%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E7%AC%AC%EF%BC%88%E4%B8%89%EF%BC%89%E7%AB%A0%20--%20%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">
+        
+          Effective Java 读书笔记第（三）章 -- 类和接口
+        
+      </div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Huangwx<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a><br>
+      
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="../../../../js/clipboard.min.js"></script>
+<script src="../../../../js/jquery-1.4.3.min.js"></script>
+
+<script src="../../../../fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+
+
+<script src="../../../../js/script.js"></script>
+
+
+
+
+
+
+<script>
+  MathJax = {
+    options: {
+      enableMenu: false
+    },
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    }
+  };
+</script>
+<!-- <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+    CommonHTML: {
+      linebreaks: false
+    }
+  });
+  </script> -->
+<script type="text/javascript" id="MathJax-script" async
+  src="../../../../mathjax/tex-chtml.js">
+</script>
+<!-- <script type="text/javascript"
+   src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_CHTML">
+</script> -->
+
+
+
+  </div>
+</body>
+</html>
