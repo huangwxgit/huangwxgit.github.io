@@ -754,6 +754,45 @@ HashSet想拷贝成TreeSet,  new TreeSet(s)<span class="bd-box"><h-char class="b
 	&#125;
 </code></pre></div>
 <h2 id="15-使可变性最小化">15. 使可变性最小化</h2>
+<blockquote>
+<p>不可变类<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span>其实是 实例不能被修改的类<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span>实例在初始化时就被完善<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>并且在对象的整个生命周期内不变<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span><br>
+例如<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span>String<span class="bd-box"><h-char class="bd bd-beg"><h-inner>、</h-inner></h-char></span>BigInteger和BigDecimal<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span><br>
+不可变类需要遵循5条规则<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span></p>
+<ol>
+<li>不要提供任何会修改对象属性的方法<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span></li>
+<li>保证类不会被拓展<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span>  即防止子类化<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>一般是使类为final的<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span></li>
+<li>使所有的域都是final的<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span></li>
+<li>使所有的域都成为私有的<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span>除非这些域 包含基本类型或指向不可变对象<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span>(之前提过的final 数组的例子<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>还是会被修改)</li>
+<li>确保对于任何可变组件的互斥访问<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span> 即 不能访问该类对象中的成员<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>初始化时也不能用 其他地方提供的对象<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>因为该对象可能会在其他地方被修改<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span> <strong>还需要注意使用保护性拷贝</strong></li>
+</ol>
+</blockquote>
+<div class="highlight"><pre class="code"><code><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Complex</span></span>&#123;
+	<span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">double</span> re;
+	<span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">double</span> im;
+	
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Complex</span><span class="hljs-params">(<span class="hljs-keyword">double</span> re,<span class="hljs-keyword">double</span> im)</span></span>&#123;
+		<span class="hljs-keyword">this</span>.re = re;
+		<span class="hljs-keyword">this</span>.im = im;
+	&#125;
+	
+	<span class="hljs-function"><span class="hljs-keyword">public</span> Complex <span class="hljs-title">add</span><span class="hljs-params">(Complex c)</span></span>&#123;
+		<span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Complex(re+c.re, im+c.im);
+	&#125;
+	
+	....
+</code></pre></div>
+<p><strong>这里我对书中原例简化了一下<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span> 主要表达的是没有对原对象进行add,而是计算后产生新的对象<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>保证其不可变</strong></p>
+<blockquote>
+<p>不可变对象的优点<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span><br>
+1.简单且确定<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>初始化时所有的属性已经确定了<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span><br>
+2.线程的安全<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>不会有修改也不会存在安全问题<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span><br>
+3. 可以提供频繁被使用的实例<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>不用每次都创建<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span><br>
+– 在设计新的类时<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>使用静态工厂代替共有的构造器<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>可以有添加缓存的灵活性<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>不影响客户端<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span><br>
+4.既然被共享<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>也就不需要clone方法和拷贝构造了<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span><br>
+缺点即<span class="bd-box"><h-char class="bd bd-beg"><h-inner>：</h-inner></h-char></span><br>
+1.有一个值不同<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>就需要一个新的对象<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span>假如一个字符串有100位长<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>只有一个字符不同<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>就需要重新创建一个长度100的char或byte数组<span class="bd-box"><h-char class="bd bd-beg"><h-inner>。</h-inner></h-char></span><br>
+所以java提供了可变的配套类<span class="bd-box"><h-char class="bd bd-beg"><h-inner>，</h-inner></h-char></span>StringBuilder和基本废弃的StringBuffer</p>
+</blockquote>
 
       
     </div>
